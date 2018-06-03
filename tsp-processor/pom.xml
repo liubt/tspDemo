@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.liubt.tspdemo</groupId>
+        <artifactId>tsp-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.github.liubt.tsp</groupId>
+    <artifactId>tsp-processor</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <start-class>com.github.liubt.tspdemo.Processor</start-class>
+        <server.contextpath></server.contextpath>
+        <logging.path>/var/log/processor</logging.path>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>1.3.2.RELEASE</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>processor1</id>
+            <properties>
+                <spring.profiles.active>processor1</spring.profiles.active>
+                <server.port>8021</server.port>
+                <kafka.topic>processor1</kafka.topic>
+                <redis.port>7001</redis.port>
+            </properties>
+        </profile>
+        <profile>
+            <id>processor2</id>
+            <properties>
+                <spring.profiles.active>processor2</spring.profiles.active>
+                <server.port>8022</server.port>
+                <kafka.topic>processor2</kafka.topic>
+                <redis.port>7002</redis.port>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>
