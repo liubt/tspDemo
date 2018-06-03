@@ -1,0 +1,18 @@
+## 系统说明
+
+系统模拟TSP接受控车指令，进行处理，最后返回结果的过程。系统分为三个服务，operateEntry,processor,resultEntry。
+operateEntry接收客户端请求后返回操作ID给客户端，然后通过kafka把操作ID发给processor服务进行处理。
+processor服务处理完成后，用操作ID作为key，操作结果作为value放到redis中。
+客户端用操作ID通过resultEntry拉取操作结果时，可以直接从redis中查询并返回给客户端。
+详细的处理流程如下：
+0. operateEntry服务的功能是接收客户端的请求。operateEntry接到请求后，生成一个唯一的操作ID返回给客户端。操作ID的前缀根据车辆的VIN码的hashCode的奇偶性生成。
+如果hashCode为奇数，前缀为processor1；否则为processor2。这个前缀也作为发送给kafka消息的topic。
+0. processor启动时，根据处理不同的topic会连接不同的redis服务（通过maven配置多个profile实现）。
+0. resultEntry会连接多个redis服务器。当接到结果查询请求时，会根据操作ID的前缀找到对应的redis服务器进行查询。
+
+
+使用kafka解耦了接收（operateEntry)和处理(processor)两个服务。
+实际场景下控车处理比较耗时，使用kafka后，当控车请求出现峰值时，也可以快速给客户端已响应。
+另外利用topic的机制也实现了processor服务的水平扩张性。
+因为processor已经通过topic进行了拆分，所以redis的分片采用了topic在客户端进行分片的模式。
+
