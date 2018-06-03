@@ -11,7 +11,7 @@ processor服务处理完成后，用操作ID作为key，操作结果作为value�
 0. resultEntry会连接多个redis服务器。当接到结果查询请求时，会根据操作ID的前缀找到对应的redis服务器进行查询。
 
 
-使用kafka解耦了接收（operateEntry)和处理(processor)两个服务。
+使用kafka解耦了接收（operateEntry)和处理(processor)两个服务。用redis解耦了处理（processor）和结果（resultEntry)两个服务。
 实际场景下控车处理比较耗时，使用kafka后，当控车请求出现峰值时，也可以快速给客户端已响应。
 另外利用topic的机制也实现了processor服务的水平扩张性。
 因为processor已经通过topic进行了拆分，所以redis的分片采用了topic在客户端进行分片的模式。
